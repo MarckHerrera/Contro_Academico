@@ -1,25 +1,9 @@
 const Asignacion = require('../models/asignaciones.model');
 
 function AgregarAsignaciones(req, res) {
-var parametros = req.body;
-var modeloAsignacion = new Asignacion();
-
-if (parametros) {
-
-    modeloAsignacion.idCurso = req.params.idCurso;
-    modeloAsignacion.idEstudiante = req.user.sub;
-
-    modeloAsignacion.save((err, asignacionGurdada)=>{
-        if (err) return res.status(500).send({mesaje: 'Error en la petición'});
-        if (!asignacionGurdada) return res.status(500).send({mesaje: 'Error al agregar la asignacion'})
-        
-        return res.status(500).send({asignacion: asignacionGurdada});
-    })
-} else {
-    return res.status(500).send({mesaje: 'Debe ingresar los parametros obligatorios'});
-}
 
 }
+
 
 function ObtenerAsignaciones(req, res) {
     Asignacion.find({}, (err, asignacionesEncontradas)=>{
@@ -45,7 +29,15 @@ function EliminarAsignacion (req,res){
 }
 
 function EditarAsignacion(req, res) {
-    
+    var idAsi = req.params.idAsignacion;
+    var parametros = req.body;
+
+    Asignacion.findByIdAndUpdate(idAsi, parametros, {new: true}, (err, asignacionEditada)=>{
+        if(err) return res.status(500).send({ mensaje: 'Error en  la peticion'});
+        if(!asignacionEditada) return res.status(500).send({mensaje: 'Error al editar el Asignacion'});
+
+        return res.status(200).send({ curso: asignacionEditada });
+    })
 }
 
 module.exports = {
